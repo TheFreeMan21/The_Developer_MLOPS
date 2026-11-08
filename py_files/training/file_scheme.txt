@@ -1,0 +1,18 @@
+├── data/                      # Data directories (ignored by git, tracked by DVC)
+├── artifacts/                 # Local output for models and statistics
+├── src/
+│   ├── __init__.py
+│   ├── config.py              # Hardcoded variables, paths, and hyperparameters
+│   ├── data/
+│   │   ├── __init__.py
+│   │   ├── make_dataset.py    # S3 downloads, DVC pulling, and raw data loading
+│   │   └── build_features.py  # PyTorch Transforms, Dataset class, and DataLoaders
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── model.py           # The SimpleCNN architecture
+│   │   ├── train_model.py     # Training loops, evaluation, and threshold tuning
+│   │   └── wrapper.py         # SimpleLoggingWrapper for inference
+│   └── utils/
+│       ├── __init__.py
+│       └── mlflow_utils.py    # MLflow setup and logging helper functions
+└── train.py                   # Main entry point script tying everything together
