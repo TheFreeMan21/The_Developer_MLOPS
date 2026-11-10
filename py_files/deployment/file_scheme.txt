@@ -1,0 +1,19 @@
+├── artifacts/                 # Local output for inference logs and baseline stats
+├── models/
+│   └── model/                 # Exported servable model directory
+├── src/
+│   ├── __init__.py
+│   ├── config_deploy.py       # Configuration variables for deployment and serving
+│   ├── deploy/
+│   │   ├── __init__.py
+│   │   ├── registry.py        # MLflow model selection, comparison, and promotion
+│   │   └── export.py          # Downloading artifacts and baking version info
+│   ├── serve/
+│   │   ├── __init__.py
+│   │   ├── drift.py           # Drift detection logic (KS tests, stats)
+│   │   └── app.py             # FastAPI application and routing
+│   └── utils/
+│       ├── __init__.py
+│       └── mlflow_utils.py    # MLflow tracking and initialization
+├── deploy.py                  # Main entry point to run selection, promotion, and export
+└── serve.py                   # Main entry point to start the FastAPI server and MLflow subprocess
