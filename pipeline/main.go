@@ -37,3 +37,14 @@ func (m *Pipeline) Data() *dagger.Directory {
 		WithExec([]string{"dvc", "checkout"}).
 		Directory("/app/data")
 }
+
+func (m *Pipeline) Train() *dagger.Directory {
+	trained := m.Base().
+		WithDirectory("/app/data", m.Data()).
+		WithMountedCache("/app/data/images/raw", dag.CacheVolume("vial-images")).
+		WithExec([]string{"python", "train.py"})
+
+	return dag.Directory().
+		WithDirectory("artifacts", trained.Directory("/app/artifacts")).
+		WithDirectory("mlflow-state", trained.Directory("/app/mlflow-state"))
+}
