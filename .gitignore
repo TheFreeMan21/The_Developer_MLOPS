@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Training outputs (produced by the pipeline, never committed)
+**/mlflow-state/
+**/artifacts/*
+!**/artifacts/.gitkeep
+**/data/images/raw/
+*.pth
+
+# Secrets and local files
+.env
+.dagger-out/
