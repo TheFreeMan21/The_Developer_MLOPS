@@ -1,37 +1,22 @@
-// A generated module for Pipeline functions
-//
-// This module has been generated via dagger init and serves as a reference to
-// basic module structure as you get started with Dagger.
-//
-// Two functions have been pre-created. You can modify, delete, or add to them,
-// as needed. They demonstrate usage of arguments and return types using simple
-// echo and grep commands. The functions can be called from the dagger CLI or
-// from one of the SDKs.
-//
-// The first line in this comment block is a short description line and the
-// rest is a long description with more detail on the module's purpose or usage,
-// if appropriate. All modules should have a short description.
-
 package main
 
 import (
-	"context"
 	"dagger/pipeline/internal/dagger"
 )
 
 type Pipeline struct{}
 
-// Returns a container that echoes whatever string argument is provided
-func (m *Pipeline) ContainerEcho(stringArg string) *dagger.Container {
-	return dag.Container().From("alpine:latest").WithExec([]string{"echo", stringArg})
-}
-
-// Returns lines that match a pattern in the files of the provided Directory
-func (m *Pipeline) GrepDir(ctx context.Context, directoryArg *dagger.Directory, pattern string) (string, error) {
+func (m *Pipeline) Base(
+	// +defaultPath="/"
+	// +ignore=[".git", "**/__pycache__", "**/.venv", "notebooks/*.ipynb", "docs"]
+	source *dagger.Directory,
+) *dagger.Container {
 	return dag.Container().
-		From("alpine:latest").
-		WithMountedDirectory("/mnt", directoryArg).
-		WithWorkdir("/mnt").
-		WithExec([]string{"grep", "-R", pattern, "."}).
-		Stdout(ctx)
+		From("python:3.13-slim").
+		WithMountedCache("/root/.cache/pip", dag.CacheVolume("pip-cache")).
+		WithWorkdir("/app").
+		WithExec([]string{"pip", "install", "torch", "torchvision", "--index-url", "https://download.pytorch.org/whl/cpu"}).
+		WithFile("/app/requirements.txt", source.File("notebooks/requirements.txt")).
+		WithExec([]string{"pip", "install", "-r", "requirements.txt"}).
+		WithDirectory("/app", source.Directory("py_files/training"))
 }
