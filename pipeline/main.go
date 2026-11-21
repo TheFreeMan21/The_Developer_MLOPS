@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"dagger/pipeline/internal/dagger"
 )
 
@@ -47,4 +48,11 @@ func (m *Pipeline) Train() *dagger.Directory {
 	return dag.Directory().
 		WithDirectory("artifacts", trained.Directory("/app/artifacts")).
 		WithDirectory("mlflow-state", trained.Directory("/app/mlflow-state"))
+}
+
+func (m *Pipeline) Test(ctx context.Context) (string, error) {
+	return m.Base().
+		WithExec([]string{"pip", "install", "pytest"}).
+		WithExec([]string{"pytest", "-v"}).
+		Stdout(ctx)
 }
